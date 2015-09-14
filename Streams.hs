@@ -31,6 +31,7 @@ instance Applicative Stream where
 mulConst :: Integer -> Stream Integer -> Stream Integer
 mulConst n  = streamMap (*n) 
 
+divConst :: (Fractional b) => b -> Stream b -> Stream b
 divConst n = streamMap (/n)
 
 streamToList :: Stream a -> [a]
