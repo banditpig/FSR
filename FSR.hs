@@ -3,10 +3,10 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE FlexibleInstances #-}
 import Streams
-import Data.Monoid
 
 data Bit = Zero | One  deriving (Show)
 
+-- | Basic boolean functions on Bit
 xor :: Bit -> Bit -> Bit 
 xor Zero Zero = Zero
 xor One One   = Zero
@@ -19,6 +19,7 @@ nott One = Zero
 nxor :: Bit -> Bit -> Bit
 nxor b1 b2 = nott  (xor b1 b2)
 
+-- | An FSR is just list of Bit with a list of taps that have corresponding Bit values
 type FSR     = [Bit] 
 type TapList = [Int]
 type BitList = [Bit]
@@ -31,11 +32,13 @@ mapFSR :: (Bit -> Bit) -> FSR -> FSR
 mapFSR _ ( []) =  []
 mapFSR f ( bits) =  (map f bits)
 
-
+-- | Shift all to the right and put a Bit into the first position
 shiftR :: FSR -> Bit  -> FSR
 shiftR [] b =  [b]
 shiftR bits b =   b : init bits
 
+
+-- | Helper functions
 asString :: FSR -> String
 asString fsr  = foldl (\acc x -> acc ++ bitAsStr x) "" fsr where
 	bitAsStr Zero = " 0 "
@@ -53,9 +56,6 @@ asInteger bits = sum [ (f (bits !! n) ) * 2^n | n <- [0.. (length bits) -1]] whe
 	f Zero = 0
 	f One  = 1
 	
-out :: FSR -> Bit
-out [] = Zero
-out fsr = (fsr !! last) where last = (length fsr) -1
 
 latch :: FSR -> TapList -> FSR
 latch fsr tapList = shiftR fsr nb where 
@@ -64,8 +64,7 @@ latch fsr tapList = shiftR fsr nb where
 
 
 start :: FSR 
---start = [ Zero, Zero, One, Zero, One, One, One, Zero,One, One, One, Zero,Zero, Zero, One, Zero, One, One, One, Zero,One, One, One, Zero, Zero,One, One, One, Zero]
 start = [One, Zero, One, One, One, Zero, One, One, One, Zero, One, Zero, One, One, One, One, One]
 
---fsrStream :: Stream Integer
+fsrStream :: FSR -> Stream Integer
 fsrStream fsr = Cons (asInteger fsr') (fsrStream fsr') where fsr' = latch fsr [13,16]
