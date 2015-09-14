@@ -4,7 +4,6 @@
 {-# LANGUAGE FlexibleInstances #-}
 import Streams
 import Data.Monoid
-import Numeric (showHex, showIntAtBase)
 
 data Bit = Zero | One  deriving (Show)
 
