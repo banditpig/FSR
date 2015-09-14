@@ -5,12 +5,13 @@
 {-# LANGUAGE FlexibleInstances #-}
 module Streams where
 import Control.Applicative
+import Data.Monoid
 
 
 data Stream a = Cons a (Stream a) 
 
 instance Show a => Show (Stream a) where
-        show str = show $ take 50000 $ streamToList str
+        show str = show $ take 100 $ streamToList str
 
 instance Fractional (Stream Integer ) where
         (/) a@(Cons a0 a') b@(Cons b0 b') = Cons (a0 `div` b0) $ streamMap ( `div` b0) (a' - b'* (a / b))
@@ -23,6 +24,11 @@ instance Num (Stream Integer) where
 
 instance Functor (Stream) where
         fmap f (Cons x sx) = (Cons (f x)) (fmap f sx)
+
+instance Monoid (Stream Integer) where
+        mempty = Cons (0) (streamRepeat (0))
+        mappend (Cons x xs )  (Cons y ys)  = Cons ( x + y) (mappend xs ys)
+        
 
 instance Applicative Stream where
         pure x = Cons x (streamRepeat x)
