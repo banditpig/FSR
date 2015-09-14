@@ -27,9 +27,8 @@ instance Functor (Stream) where
 
 instance Monoid (Stream Integer) where
         mempty = Cons (0) (streamRepeat (0))
-        mappend (Cons x xs )  (Cons y ys)  = Cons ( x + y) (mappend xs ys)
+        mappend x y  = combine (+) x y
         
-
 instance Applicative Stream where
         pure x = Cons x (streamRepeat x)
         (Cons f sf) <*> (Cons x sx) = (Cons (f x)) (sf <*> sx)
@@ -52,6 +51,9 @@ streamMap f ( Cons x stream ) = Cons (f x) (streamMap f stream)
 streamFromSeed :: (a -> a) -> a -> Stream a
 streamFromSeed f a = Cons fa (streamFromSeed f fa) where
         fa = f a
+
+combine ::(a -> a -> b) ->  Stream a -> Stream a -> Stream b
+combine f (Cons a s1) (Cons b s2) = Cons ( f a b) $ combine f s1 s2
 
 
 interleave :: Stream a -> Stream a -> Stream a
