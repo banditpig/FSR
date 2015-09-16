@@ -49,8 +49,7 @@ streamMap :: (a -> b) -> Stream a -> Stream b
 streamMap f ( Cons x stream ) = Cons (f x) (streamMap f stream)
 
 streamFromSeed :: (a -> a) -> a -> Stream a
-streamFromSeed f a = Cons fa (streamFromSeed f fa) where
-        fa = f a
+streamFromSeed f a = Cons a (streamFromSeed f (f a)) 
 
 combine ::(a -> a -> b) ->  Stream a -> Stream a -> Stream b
 combine f (Cons a s1) (Cons b s2) = Cons ( f a b) $ combine f s1 s2
@@ -66,6 +65,12 @@ dropAlt (Cons _ (Cons b s)) = Cons b (dropAlt s)
 
 nats :: Stream Integer
 nats =  streamFromSeed (+1) 0
+
+evens :: Stream Integer
+evens = streamFromSeed (+2) 0
+
+odds :: Stream Integer
+odds = streamFromSeed (+2) 1
 
 
 
