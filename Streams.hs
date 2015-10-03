@@ -62,7 +62,24 @@ interleave (Cons a s1) (Cons b s2) = Cons a (Cons b (interleave s1 s2))
 dropAlt :: Stream a -> Stream a
 dropAlt (Cons _ (Cons b s)) = Cons b (dropAlt s)
 
+stake :: Integer -> Stream a -> [a]
+stake 0 _ = []
+stake 1 (Cons a s) = [a]
+stake n (Cons a s) = [a] ++ stake (n-1) s
 
+-- split :: Stream a -> (Stream a, Stream a)
+-- split s = (sa, sb) where
+--   [a,b] = stake 2  s
+--   sa = Cons a s
+--   sb = Cons b s
+
+-- split = foldl (\)
+
+dup :: Stream a -> (Stream a, Stream a)
+dup s = (sa, sb)  where
+        sa = s
+        sb = s
+        
 nats :: Stream Integer
 nats =  streamFromSeed (+1) 0
 
